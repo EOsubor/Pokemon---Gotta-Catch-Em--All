@@ -1,0 +1,67 @@
+from pokemon import Pokemon
+from pokemon_trainer import Trainer
+import random
+
+
+player = Trainer(name='', my_pokemons=[], back_pack={"potion": 5, "revive": 2}, level=1)
+opponent_names = ["Brock", "Misty", "Lt. Surge", "Erika", "Koga", "Sabrina", "Blaine", "Giovanni"]
+poke_dex = [{"name": "Bulbasaur", "poke_type": ["grass"]},
+        {"name": "Charmander", "poke_type": ["fire"]},
+        {"name": "Squirtle", "poke_type": ["water"]}]
+
+def wild_battle():
+    pass
+
+
+def trainer_battle():
+    pass
+
+
+def view_pokedex():
+    pass
+
+
+def view_backpack():
+    pass
+
+
+def view_shop():
+    pass
+
+def initlaize_game():
+	print("Welcome to the world of Pokemon! Professor Oak has asked me to welcome you. Let me take your name.")
+	player.name = input()
+	print(f"Hi %s. This is Professor Oaks' lab!" %player.name)
+	print("Look, it's my first day, and with the professor out of the lab right now..."
+	      "you know what, just take these three pokeballs. I'm sure it'll be fine.\n")
+	player.my_pokemons.extend([Pokemon("Bulbasaur", level=5, poke_type=['grass']),
+	                    Pokemon("Charmander", level=5, poke_type=['fire']),
+	                    Pokemon("Squirtle", level=5, poke_type=['water'])])
+
+
+	playing = True
+	while playing:
+		choice = input("\nWhat would you like to do?\n"
+		               "1) Search tall grass\n"
+		               "2) Trainer Battle\n"
+		               "3) View My Pokemon\n"
+		               "4) View BackPack\n"
+		               "5) Shop\n"
+		               "6) Quit\n")
+		if (choice == '1'):
+			playing = wild_battle()
+		elif (choice == '2'):
+			playing = trainer_battle()
+		elif (choice == '3'):
+			player.view_pokedex()
+		elif (choice == '4'):
+			player.view_pack()
+		elif (choice == '5'):
+			view_shop()
+		elif (choice == '6'):
+			playing = False
+	print(f"You completed %.2f%% of your pokedex. Good enough!" % (random.randint(0, 15) * 0.1))
+
+
+if __name__ == '__main__':
+    initialize_game()

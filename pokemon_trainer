@@ -1,12 +1,12 @@
-from script import Pokemon
+from pokemon import Pokemon
 
 class Trainer:
-  def __init__(self, name, level, my_pokemons, potions, current_pokemon):#=Pokemon.level():
+  def __init__(self, name=None, level, my_pokemons, back_pack, current_pokemon=None, coins=2500):#=Pokemon.level():
     self.my_pokemons = []
     self.current_pokemon = current_pokemon
     self.name = name
     self.level = level
-    self.potions = potions
+    self.back_pack = back_pack
 
   def use_small_potion(self, val=5):
     if int(self.potions) > 0:
@@ -22,5 +22,24 @@ class Trainer:
 
   def catch_pokemon(self):
     pass
+
+
+  def has_pokemon(self):
+	for pokemon in self.my_pokemons:
+		if (not pokemon.is_ko):
+			return True
+	return False
+
+  def average_pokemon_level(self):
+    return sum(self.my_pokemons.level for my_pokemon in self.my_pokemons) / len(self.my_pokemons)
+
+
+  def view_pkmn(self):
+    print(f"%s's Pokemon:" % self.name)
+    for index, pokemon in enumerate(self.my_pokemons, 1):
+    	ko = ''
+    	if (pokemon.is_ko):
+    		ko = " - Knocked Out!"
+    	print(f"%d - %s  Lv.%d  %d/%d HP%s" % (index, pokemon.name, pokemon.level, pokemon.current_health, pokemon.max_health, pokemon.is_ko))
 
 # set attack based on pokemon level and master experience. Use a range of numbers to increase probability of more experinced trainers winning. random.randint(0, 1) if  level < 10. random.randint(0, 2) if  level > 10. deal critical if 2.
