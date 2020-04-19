@@ -2,31 +2,73 @@ from pokemon import Pokemon
 from pokemon_trainer import Trainer
 import random
 
+# Add Database to keep score of former scres according to player name and date?
+
 
 player = Trainer(name='', my_pokemons=[], back_pack={"potion": 5, "revive": 2}, level=1)
 opponent_names = ["Brock", "Misty", "Lt. Surge", "Erika", "Koga", "Sabrina", "Blaine", "Giovanni"]
 poke_dex = [{"name": "Bulbasaur", "poke_type": ["grass"]},
         {"name": "Charmander", "poke_type": ["fire"]},
-        {"name": "Squirtle", "poke_type": ["water"]}]
+        {"name": "Squirtle", "poke_type": ["water"]},
+        {"name": "Pikachu", "poke_type": ["electric"]}]
 
-def wild_battle():
+def op_trainer(self):
+	op_belt = []
+	level = 0
+	for slot in range(random.randint(1, 6)):
+		pokemon_choice = random.choice(poke_dex)
+		level = player.get_avg_level() + random.randint(-1, 2)
+		op_belt.append(Pokemon(pokemon_choice["name"], level, pokemon_choice["poke_type"]))
+	coins = level * 10
+	return Trainer(name=random.choice(opponent_names), my_pokemons=op_belt, back_pack={"potion": 5, "revive": 2}, coins)
+
+
+def wild_battle(self):
     pass
 
 
-def trainer_battle():
+def trainer_battle(self):
     pass
 
 
-def view_pokedex():
+def display_pokedex(self):
     pass
 
 
-def view_backpack():
+def view_backpack(self):
     pass
+
+
+def purchase_items_items(item, quantity):
+	if (quantity == '1' and player.coins >= item["cost"]):
+		player.back_pack[item["name"]] = player.back_pack.get(item["name"], 0) + 1
+		player.coins -= item["cost"]
+	elif (quantity == '2' and player.coins >= item["cost"] * 10):
+		player.back_pack[item["name"]] = player.back_pack.get(item["name"], 0) + 10
+		player.coins -= item["cost"] * 10
+	elif (quantity == '3'):
+		player.back_pack[item["name"]] = player.back_pack.get(item["name"], 0) + player.coins / item["cost"]
+		player.coins = player.coins % item["cost"]
 
 
 def view_shop():
-    pass
+    available_stock = {"1": {"name": "potion", "cost": 10},
+	         "2": {"name": "revive", "cost": 30},
+	         "3": {"name": "pokeball", "cost": 100},
+	         "4": {"name": "ultraball", "cost": 1000}}
+	print(f"PokeCenter:       (You have %dg)" % player.coins)
+	for num, item_detail in available_stock.items():
+		print(f"%s) %s - %dg" % (num, item_detail, item_detail["name"], item_detail["cost"]))
+	print("What would you like to buy?")
+	# print("1) potion - 10g\n2) revive - 30g")
+	item_choice = input()
+	if (item_choice in available_stock):
+		print("How many?")
+		print("1) 1\n2) 10\n3) Max")
+		quantity = input()
+		purchase_items(available_stock[item_choice], quantity)
+	print("Thank you.")
+
 
 def initlaize_game():
 	print("Welcome to the world of Pokemon! Professor Oak has asked me to welcome you. Let me take your name.")
@@ -55,7 +97,7 @@ def initlaize_game():
 		elif (choice == '3'):
 			player.view_pokedex()
 		elif (choice == '4'):
-			player.view_pack()
+			player.back_pack()
 		elif (choice == '5'):
 			view_shop()
 		elif (choice == '6'):

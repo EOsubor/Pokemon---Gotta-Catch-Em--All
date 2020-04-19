@@ -1,4 +1,6 @@
 from pokemon import Pokemon
+import random
+import time
 
 class Trainer:
   def __init__(self, name=None, level, my_pokemons, back_pack, current_pokemon=None, coins=2500):#=Pokemon.level():
@@ -8,33 +10,104 @@ class Trainer:
     self.level = level
     self.back_pack = back_pack
 
+
   def use_small_potion(self, val=5):
-    if int(self.potions) > 0:
-      self.current_pokemon.regen_health(val)
-      self.potions -= 1
-      print(f"You have {self.potions} left.")
+      if int(self.potions) > 0:
+          self.current_pokemon.regen_health(val)
+          self.potions -= 1
+          print(f"You have {self.potions} left.")
+
 
   def attack_ops_trainer(self):
-    pass
+      pass
 
-  def change_active_pokemon(self, new_pokemon):
-    self.current_pokemon = new_pokemon
 
-  def catch_pokemon(self):
-    pass
+  def set_active_pokemon(self, choice):
+      poke_choice = self.my_pokemons.index(self.my_pokemons[choice])
+      self.my_pokemons.insert(0, self.my_pokemons.pop(poke_choice))
+
+
+  def change_active_pokemon(self):
+      self.view_pokedex
+      print("[number] to change current pokemon, or [Enter] to close")
+	  choice = input()
+      if choice in [str(i + 1) for i in range(len(self.my_pokemons))]:
+          if (not self.my_pokemons[int(choice) - 1].is_ko):
+              self.set_active_pokemon(int(choice) - 1)
+          else:
+              self.change_active_pokemon()
+      elif (self.my_pokemons[0].is_ko):
+		  self.change_active_pokemon()
 
 
   def has_pokemon(self):
-	for pokemon in self.my_pokemons:
-		if (not pokemon.is_ko):
-			return True
-	return False
+      for pokemon in self.my_pokemons:
+          if (not pokemon.is_ko):
+              return True
+      return False
+
 
   def average_pokemon_level(self):
-    return sum(self.my_pokemons.level for my_pokemon in self.my_pokemons) / len(self.my_pokemons)
+      return sum(self.my_pokemons.level for my_pokemon in self.my_pokemons) / len(self.my_pokemons)
 
 
-  def view_pkmn(self):
+  def view_backpack(self, in_wild=False):
+      pack = {}
+	  count = 1
+	  for key, val in self.back_pack.items():
+		  pack[str(count)] = key
+		  count += 1
+	  print(f"Wallet: %dg" % self.coins)
+	  for num, name in pack.items():
+		  print(f"%s) %s - %d" % (num, name, self.back_pack[name]))
+	  print("[number] to select, or [Enter] to close")
+	  choice = input()
+	  if (choice in [str(i + 1) for i in range(len(self.my_pokemons))] and self.back_pack[pack[choice]] > 0):
+		  if (pack[choice] in ["pokeball", "ultraball"]):
+			  if (in_wild):
+				  return self.catch_pokemon(pack, choice)
+			  else:
+				  print("There are no wild pokemon to catch.")
+				  return False
+		  self.view_pokedex()
+		  print("[number] to apply effect, or [Enter] to close")
+		  slot = input()
+		  if (slot in [str(i + 1) for i in range(len(self.my_pokemons))]):
+			  if (pack[choice] == "potion"):
+				  self.my_pokemons[int(slot) - 1].current_health = min(self.my_pokemons[int(slot) - 1].current_health + 30,
+					                                            self.my_pokemons[int(slot) - 1].max_health)
+				  self.back_pack[pack[choice]] -= 1
+			  elif (pack[choice] == "revive"):
+				  self.my_pokemons[int(slot) - 1].current_health = min(self.my_pokemons[int(slot) - 1].current_health + 1,
+					                                            self.my_pokemons[int(slot) - 1].max_health)
+				  self.my_pokemons[int(slot) - 1].is_ko = False
+				  self.back_pack[pack[choice]] -= 1
+			  return False
+		  return False
+	  return False
+
+
+  def catch_pokemon(self, pack, choice):
+		poke_balls = {"pokeball": 30,
+		         "ultraball": 75}
+		self.back_pack[pack[choice]] -= 1
+		print("You throw a pokeball.")
+		catching_phrases = ["The ball lurches violently!",
+		                    "The ball shudders in protest.",
+		                    "The ball shakes weakly."]
+		time.sleep(2)
+		for i in range(3):
+			catching_chance = random.randint(0, 100)
+			if (catching_chance < poke_balls[pack[choice]]):
+				return True
+			else:
+				print(catching_phrases[i])
+				time.sleep(1.2)
+		print("The ball shatters!")
+		return False
+
+
+  def view_pokedex(self):
     print(f"%s's Pokemon:" % self.name)
     for index, pokemon in enumerate(self.my_pokemons, 1):
     	ko = ''
